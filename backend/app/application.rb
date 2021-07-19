@@ -24,6 +24,10 @@ class Application
           games = Game.all
         end
         return [200, { 'Content-Type' => 'application/json' }, [ {:message => games}.to_json ]]
+      elsif req.env["REQUEST_METHOD"] == "DELETE" 
+        form_data = JSON.parse(req.body.read)
+        game = Game.destroy(form_data["id"])
+        return [200, { 'Content-Type' => 'application/json' }, [ {:message => game}.to_json ]]
       else
         form_data = JSON.parse(req.body.read)
         new_game = Game.create(form_data)
@@ -37,6 +41,10 @@ class Application
           consoles = Console.all
         end
         return [200, { 'Content-Type' => 'application/json' }, [ {:message => consoles}.to_json ]]
+      elsif req.env["REQUEST_METHOD"] == "DELETE" 
+        form_data = JSON.parse(req.body.read)
+        console = Console.destroy(form_data["id"])
+        return [200, { 'Content-Type' => 'application/json' }, [ {:message => console}.to_json ]]
       else
         form_data = JSON.parse(req.body.read)
         new_console = Console.create(form_data)

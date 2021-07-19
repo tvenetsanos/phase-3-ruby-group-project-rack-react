@@ -9,6 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { Link } from "react-router-dom";
 import Button from '@material-ui/core/Button';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 
 class YourVault extends Component {
@@ -24,19 +25,53 @@ class YourVault extends Component {
   }
 
   componentDidMount() {
-    fetch(`http://localhost:9393/consoles/?userId=${this.state.userDetailId}`)
+    fetch(`http://localhost:9393/consoles?userId=${this.state.userDetailId}`)
     .then((res) => res.json())
     .then((data) => {
       this.setState({
         consoles: data.message,
       })
     })
-    fetch(`http://localhost:9393/games/?userId=${this.state.userDetailId}`)
+    fetch(`http://localhost:9393/games?userId=${this.state.userDetailId}`)
     .then((res) => res.json())
     .then((data) => {
       this.setState({
         games: data.message,
       })
+    })
+  }
+
+  removeGameFromList = (gameId) => {
+    const requestOptions = {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      id: gameId
+    })
+  };
+  fetch("http://localhost:9393/games", requestOptions)
+    let newGames = this.state.games.filter((games) => {
+      return gameId !== games.id
+    })
+    this.setState({
+      games: newGames
+    })
+  }
+
+  removeConsoleFromList = (consoleId) => {
+    const requestOptions = {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        id: consoleId
+      })
+    };
+    fetch("http://localhost:9393/consoles", requestOptions)
+    let newConsoles = this.state.consoles.filter((consoles) => {
+      return consoleId !== consoles.id
+    })
+    this.setState({
+      consoles: newConsoles
     })
   }
 
@@ -60,6 +95,9 @@ class YourVault extends Component {
         </CardActionArea>
         <CardActions>
         </CardActions>
+        <Button size="small" color="primary" onClick={() => this.removeGameFromList(game.id)}>
+        <DeleteForeverIcon/>
+        </Button>
       </Card>
     </Grid>
     );
@@ -80,6 +118,9 @@ class YourVault extends Component {
         </CardActionArea>
         <CardActions>
         </CardActions>
+        <Button size="small" color="primary" onClick={() => this.removeConsoleFromList(console.id)}>
+        <DeleteForeverIcon/>
+        </Button>
       </Card>
     </Grid>
     );
